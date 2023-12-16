@@ -4,8 +4,8 @@ class UnionFind {
     private size: number[]
 
     constructor(arrLen: number) {
-        this.parent = new Array<number>(arrLen).fill(0).map((v, i) => i)
-        this.size = new Array<number>(arrLen).fill(1)
+        this.parent = new Array<number>(arrLen + 1).fill(0).map((v, i) => i)
+        this.size = new Array<number>(arrLen + 1).fill(1)
     }
 
     private find(target: number): number {
