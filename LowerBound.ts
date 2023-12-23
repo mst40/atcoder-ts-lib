@@ -6,7 +6,7 @@ function LowerBound(sortedArray: number[], target: number): number {
     let mid: number = 0
     while (low <= high) {
         mid = Math.floor((low + high) / 2)
-        if (sortedArray[mid] <= target) { low = mid + 1; }
+        if (sortedArray[mid] < target) { low = mid + 1; }
         else { high = mid - 1 }
     }
     return low
