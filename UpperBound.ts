@@ -1,3 +1,4 @@
+// Returns the index of smallest value that is greater than the target value. (target < value[index])
 function UpperBound(sortedArray: number[], target: number): number {
     let low: number = 0;
     let high: number = sortedArray.length - 1
