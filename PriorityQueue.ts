@@ -6,7 +6,7 @@ class priorityQueue {
   //比較関数 最小(a,b)=>(a <= b) or 最大(a,b)=>(a >= b)
   compare: (a: number, b: number) => boolean;
 
-  constructor(compare: () => boolean) {
+  constructor(compare: (a: number, b: number) => boolean) {
     this.queue = [];
     this.compare = compare;
   }
