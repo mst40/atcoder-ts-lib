@@ -51,7 +51,7 @@ class priorityQueue {
       }
 
       q[i] = q[mid];
-      i = mid;
+      i++
     }
 
     if (q.length) {
