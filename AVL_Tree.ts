@@ -79,7 +79,7 @@ class AVL_Tree<T> {
   private _balancingNode(node: AVL_TreeNode<T>, factor: number, value: T): AVL_TreeNode<T> {
     // if the right tree is long
     if (factor > 1) {
-      if (value < node.right!.value) {
+      if (value > node.right!.value) {
         return this._rotateLeft(node);
       } else {
         node.right = this._rotateRight(node.right!);
@@ -196,3 +196,19 @@ class AVL_Tree<T> {
 // console.log(tm.count(4));
 // console.log(tm.count(5));
 // console.log(tm.count(6));
+// const ts = new AVL_Tree();
+
+// ts.insert(2);
+// console.log(2);
+// ts.insert(3);
+// console.log(3);
+
+// ts.insert(4);
+// console.log(4);
+
+// ts.insert(5);
+// console.log(ts.min, ts.max);
+// ts.insert(6);
+// console.log(ts.min, ts.max);
+// ts.insert(1);
+// console.log(ts.min, ts.max);
