@@ -18,5 +18,3 @@ function nCrMOD(n: bigint, r: bigint, mod: bigint) {
   if (n < 0 || r < 0) return 0;
   return (fac[Number(n)] * ((finv[Number(r)] * finv[Number(n - r)]) % mod)) % mod;
 }
-
-console.log(nCr(4n, 2n, 10n ** 9n + 7n));
