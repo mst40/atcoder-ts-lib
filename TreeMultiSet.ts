@@ -19,7 +19,7 @@ class TreeSetNode<T> {
   }
 }
 
-class TreeSet<T> {
+class TreeMultiSet<T> {
   root: TreeSetNode<T> | null;
   constructor() {
     this.root = null;
