@@ -1,7 +1,20 @@
+// min
 class PriorityQueue {
   ary: number[];
-  constructor() {
+  size: number;
+  func: (a: number, b: number) => boolean;
+  constructor(func: "min" | "max") {
     this.ary = [];
+    this.size = 0;
+    if (func == "min") {
+      this.func = (a: number, b: number): boolean => {
+        return a <= b;
+      };
+    } else {
+      this.func = (a: number, b: number): boolean => {
+        return a >= b;
+      };
+    }
   }
 
   push(v: number) {
@@ -11,15 +24,19 @@ class PriorityQueue {
 
     while (i) {
       mid = (i - 1) >> 1;
-      if (ary[mid] <= v) break;
+      if (this.func(ary[mid], v)) break;
       ary[i] = ary[mid];
       i = mid;
     }
-
+    this.size++;
     ary[i] = v;
   }
 
-  pop(): number {
+  pop(): number | undefined {
+    if (this.size < 1) {
+      return undefined;
+    }
+    this.size--;
     let ary: number[] = this.ary;
     let top: number = ary[0];
     let popped: number = ary.pop()!;
@@ -31,7 +48,7 @@ class PriorityQueue {
     while (i < k) {
       mid = i * 2 + 1;
       if (ary[mid + 1] < ary[mid]) mid++;
-      if (popped <= ary[mid]) break;
+      if (this.func(popped, ary[mid])) break;
       ary[i] = ary[mid];
       i = mid;
     }
@@ -40,8 +57,8 @@ class PriorityQueue {
     return top;
   }
 
-  size(): number {
-    return this.ary.length;
+  get getSize(): number {
+    return this.size;
   }
 
   top(): number {
