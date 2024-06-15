@@ -12,7 +12,6 @@ function nCrMOD(n: bigint, r: bigint, mod: bigint) {
     inv[i] = mod - ((inv[Number(mod) % i] * (mod / BigInt(i))) % mod);
     finv[i] = (finv[i - 1] * inv[i]) % mod;
   }
-  console.log(fac, finv, inv);
 
   if (n < r) return 0;
   if (n < 0 || r < 0) return 0;

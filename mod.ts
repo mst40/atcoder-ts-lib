@@ -9,7 +9,7 @@ class Mod {
   }
 
   // a ** n % mod
-  pow(a: bigint, n: bigint) {
+  pow(a: bigint, n: bigint): bigint {
     if (n === 0n) {
       return 1n;
     }
