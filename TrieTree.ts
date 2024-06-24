@@ -83,6 +83,9 @@ class TrieTree {
     if (idx === str.length - 1) {
       if (child) {
         child.SetIsEnd(false);
+        if (this.isEmptyObject(child!.getChild)) {
+          delete node.getChild[t];
+        }
         return true;
       }
       return false;
@@ -90,7 +93,7 @@ class TrieTree {
 
     const deleted = this._deleteHelper(child!, str, idx + 1);
 
-    if (deleted && this.isEmptyObject(child!.getChild)) {
+    if (deleted && !child.getIsEnd && this.isEmptyObject(child!.getChild)) {
       delete node.getChild[t];
     }
 
