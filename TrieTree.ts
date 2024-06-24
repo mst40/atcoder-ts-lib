@@ -1,39 +1,31 @@
 class TrieNode {
   private children: { [key: string]: TrieNode };
   private isEnd: boolean;
-
   constructor() {
     this.children = {};
     this.isEnd = false;
   }
-
   has(s: string): boolean {
     return s in this.children;
   }
-
   remove(s: string): void {
     delete this.children[s];
   }
-
   get getChild() {
     return this.children;
   }
-
   get getIsEnd(): boolean {
     return this.isEnd;
   }
-
   SetIsEnd(v: boolean) {
     this.isEnd = v;
   }
 }
-
 class TrieTree {
   private root: TrieNode;
   constructor() {
     this.root = new TrieNode();
   }
-
   public insert(str: string) {
     let node = this.root;
     for (const s of str) {
@@ -45,7 +37,6 @@ class TrieTree {
     }
     node.SetIsEnd(true);
   }
-
   public hasExactMatch(str: string): boolean {
     let node = this.root;
     for (const s of str) {
@@ -56,7 +47,6 @@ class TrieTree {
     }
     return node.getIsEnd;
   }
-
   public hasPrefixMatch(str: string): boolean {
     let node = this.root;
     for (const s of str) {
@@ -67,19 +57,27 @@ class TrieTree {
     }
     return true;
   }
-
+  public getMatchNum(str: string): number {
+    let node = this.root;
+    let res = 0;
+    for (const s of str) {
+      if (!node.has(s)) {
+        break;
+      }
+      res++;
+      node = node.getChild[s];
+    }
+    return res;
+  }
   public delete(str: string): boolean {
     return this._deleteHelper(this.root, str, 0);
   }
-
   private _deleteHelper(node: TrieNode, str: string, idx: number): boolean {
     if (idx >= str.length || !node) {
       return false;
     }
-
     const t = str[idx];
     const child = node.getChild[t];
-
     if (idx === str.length - 1) {
       if (child) {
         child.SetIsEnd(false);
@@ -90,16 +88,12 @@ class TrieTree {
       }
       return false;
     }
-
     const deleted = this._deleteHelper(child!, str, idx + 1);
-
     if (deleted && !child.getIsEnd && this.isEmptyObject(child!.getChild)) {
       delete node.getChild[t];
     }
-
     return deleted;
   }
-
   private isEmptyObject(obj: { [key: string]: TrieNode }): boolean {
     if (Object.keys(obj).length) {
       return false;
