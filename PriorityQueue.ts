@@ -1,50 +1,56 @@
-class PriorityQueue {
-  ary: number[];
-  size: number;
-  func: (a: number, b: number) => boolean;
-  constructor(func: "min" | "max") {
-    this.ary = [];
-    this.size = 0;
-    if (func == "min") this.func = (a: number, b: number): boolean => a <= b;
-    else this.func = (a: number, b: number): boolean => a >= b;
+class PriorityQueue<T> {
+  heap: [T, number][];
+  order: number;
+  constructor(order: "asc" | "des") {
+    this.heap = [];
+    this.order = order == "asc" ? 1 : -1;
   }
-  push(v: number) {
-    let ary: number[] = this.ary;
-    let i: number = ary.length++;
-    let mid: number = 0;
 
-    while (i) {
-      mid = (i - 1) >> 1;
-      if (this.func(ary[mid], v)) break;
-      ary[i] = ary[mid];
-      i = mid;
+  push(key: T, value: number = Number(key)) {
+    value *= this.order;
+    const Q = this.heap;
+    Q.push([key, value]);
+    for (let i = Q.length - 1, p; i > 0; i = p) {
+      p = (i - 1) >> 1;
+      if (Q[p][1] < value) break;
+      Q[i] = Q[p];
+      Q[p] = [key, value];
     }
-    this.size++;
-    ary[i] = v;
   }
-  pop(): number | undefined {
-    if (this.size < 1) return undefined;
-    this.size--;
-    let ary: number[] = this.ary;
-    let top: number = ary[0];
-    let popped: number = ary.pop()!;
-    let i: number = 0;
-    let k: number = ary.length >> 1;
-    let mid: number = 0;
-    while (i < k) {
-      mid = i * 2 + 1;
-      if (ary[mid + 1] < ary[mid]) mid++;
-      if (this.func(popped, ary[mid])) break;
-      ary[i] = ary[mid];
-      i = mid;
+
+  pop(): [T, number] | undefined {
+    const Q = this.heap;
+    const res = Q[0];
+    const tail: [T, number] = Q.pop()!;
+    const len = Q.length;
+    const f = (n: number) => (n << 1) + 1;
+    if (len) Q[0] = tail;
+    for (let i = 0, t; f(i) < len; i = t) {
+      t = f(i);
+      if (t < len - 1 && Q[t][1] > Q[t + 1][1]) t++;
+      if (Q[t][1] > Q[i][1]) break;
+      const tmp = Q[i];
+      Q[i] = Q[t];
+      Q[t] = tmp;
     }
-    if (ary.length) ary[i] = popped;
-    return top;
+    if (res) res[1] *= this.order;
+    return res;
   }
-  get getSize(): number {
-    return this.size;
-  }
-  top(): number {
-    return this.ary[0];
+
+  isEmpty() {
+    return this.heap.length ? false : true;
   }
 }
+
+/**
+ *
+ * push(): heaptreeを用いて以下を行う。
+ *  1.木の末尾に新しい値を追加する
+ *  2.末尾から各i と i の親ノード((i-1)>>1)を比較し、必要な場合入れ替えシフトアップしながら適切な場所に移動する
+ *
+ * pop(): heaptreeを用いて以下を行う。
+ *  1.木の一番上(index:0)をresultとする
+ *  2.木の一番上を木の末尾と置き換える。
+ *  3.iと iの左の子ノード((i<<1)+1)のノードを比較し、必要な場合入れ替え、シフトダウンしながら適切な場所に移動する
+ *
+ */
