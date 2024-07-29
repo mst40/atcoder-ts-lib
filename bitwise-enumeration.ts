@@ -1,4 +1,4 @@
-function bitSubSetSearch<T>(arr: T[]): T[][] {
+function bitwiseEnumeration<T>(arr: T[]): T[][] {
     const n = arr.length;
     let set: T[][] = [];
 
