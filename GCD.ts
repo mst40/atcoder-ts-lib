@@ -1,5 +1,5 @@
-function GCD(x: number, y: number): number {
-    return y ? GCD(y, x % y) : x
+function gcd(x: number, y: number): number {
+  return y ? gcd(y, x % y) : x;
 }
 
 //以下のgcdは(1,0)のようにyが0のとき、1%0をするとNaNとなり、0を返してしまうので使用しないほうが良い。

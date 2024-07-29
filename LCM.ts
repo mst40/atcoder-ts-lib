@@ -1,8 +1,8 @@
 //gcd
-function f(x: number, y: number): number {
-    return y ? GCD(y, x % y) : x
-}
+// function gcd(x: number, y: number): number {
+//   return y ? gcd(y, x % y) : x;
+// }
 
-function LCM(x: number, y: number): number {
-    return (x * y) / f(x, y)
+function lcm(x: number, y: number): number {
+  return (x * y) / gcd(x, y);
 }

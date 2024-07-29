@@ -1,4 +1,4 @@
-function UpperBound(sortedArray: number[], target: number): number {
+function upperBound(sortedArray: number[], target: number): number {
     let low: number = 0;
     let high: number = sortedArray.length - 1;
     let mid: number = 0;
