@@ -137,19 +137,24 @@ class AVL_Tree<T> {
     if (!node) {
       return null;
     }
+
     if (value < node.value) {
       node.left = this._removeHelper(node.left, value);
     } else if (value > node.value) {
       node.right = this._removeHelper(node.right, value);
     } else {
-      if (!node.left) {
-        node = node.right;
-      } else if (!node.right) {
-        node = node.left;
+      if (node.count > 1) {
+        node.count--;
       } else {
-        const min = this._findMin(node.right);
-        node.value = min.value;
-        node.right = this._removeHelper(node.right, min.value);
+        if (!node.left) {
+          node = node.right;
+        } else if (!node.right) {
+          node = node.left;
+        } else {
+          const min = this._findMin(node.right);
+          node.value = min.value;
+          node.right = this._removeHelper(node.right, min.value);
+        }
       }
 
       if (node) {
@@ -176,39 +181,42 @@ class AVL_Tree<T> {
   }
 }
 
-// const tm = new AVL_Tree();
-// tm.insert(3);
-// tm.insert(5);
-// tm.insert(4);
-// tm.insert(2);
-// tm.insert(6);
-// tm.insert(1);
+const tm = new AVL_Tree();
+tm.insert(3);
+tm.insert(5);
+tm.insert(4);
+tm.insert(2);
+tm.insert(6);
+tm.insert(1);
+tm.insert(1);
 
-// console.log(tm.min, tm.max); // 1, 6
-// tm.remove(tm.min);
-// console.log(tm.min); // 2
-// tm.remove(tm.max);
-// console.log(tm.max); // 5
-// tm.insert(3);
-// console.log(tm.count(1));
-// console.log(tm.count(2));
-// console.log(tm.count(3)); //2
-// console.log(tm.count(4));
-// console.log(tm.count(5));
-// console.log(tm.count(6));
-// const ts = new AVL_Tree();
+console.log(tm.min, tm.max); // 1, 6
+tm.remove(tm.min);
+console.log(tm.min); // 1
+tm.remove(tm.min);
+console.log(tm.min); // 2
+tm.remove(tm.max);
+console.log(tm.max); // 5
+tm.insert(3);
+console.log(tm.count(1));
+console.log(tm.count(2));
+console.log(tm.count(3)); //2
+console.log(tm.count(4));
+console.log(tm.count(5));
+console.log(tm.count(6));
+const ts = new AVL_Tree();
 
-// ts.insert(2);
-// console.log(2);
-// ts.insert(3);
-// console.log(3);
+ts.insert(2);
+console.log(2);
+ts.insert(3);
+console.log(3);
 
-// ts.insert(4);
-// console.log(4);
+ts.insert(4);
+console.log(4);
 
-// ts.insert(5);
-// console.log(ts.min, ts.max);
-// ts.insert(6);
-// console.log(ts.min, ts.max);
-// ts.insert(1);
-// console.log(ts.min, ts.max);
+ts.insert(5);
+console.log(ts.min, ts.max);
+ts.insert(6);
+console.log(ts.min, ts.max);
+ts.insert(1);
+console.log(ts.min, ts.max);
