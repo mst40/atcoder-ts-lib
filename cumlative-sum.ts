@@ -6,9 +6,9 @@ class CumulativeSum {
       this.cum.push(arr[i] + this.cum[i - 1]);
     }
   }
+  // [s,e) sliceと一緒
   rangeSum(s: number, e: number) {
-    console.log(this.cum);
-    return this.cum[e] - (this.cum[s - 1] || 0);
+    return this.cum[e - 1] - (this.cum[s - 1] || 0);
   }
   sum(v: number) {
     return this.cum[v];
