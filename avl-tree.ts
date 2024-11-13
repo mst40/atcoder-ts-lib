@@ -2,182 +2,185 @@ class AVL_TreeNode<T> {
   value: T;
   left: AVL_TreeNode<T> | null;
   right: AVL_TreeNode<T> | null;
-  count: number;
   height: number;
-  constructor(v: T) {
-    this.value = v;
+  constructor(n: T) {
+    this.value = n;
     this.left = null;
     this.right = null;
-    this.count = 1;
     this.height = 1;
   }
 }
 
 class AVL_Tree<T> {
-  private root: AVL_TreeNode<T> | null;
+  root: AVL_TreeNode<T> | null;
   constructor() {
     this.root = null;
   }
-  // insert value.
-  insert(value: T): void {
-    this.root = this._insertHelper(this.root, value);
+
+  insert(val: T) {
+    this.root = this._insertHelper(this.root, val);
   }
-  // get value count. O(logN)
-  count(value: T): number {
-    return this._getCountHelper(this.root, value);
+  remove(val: T): boolean {
+    const newTree = this._removeHelper(this.root, val);
+    this.root = newTree;
+    if (!newTree) {
+      return false;
+    }
+    return true;
   }
-  // remove value
-  remove(value: T): void {
-    this.root = this._removeHelper(this.root, value);
-  }
-  get min(): T | undefined {
+  min(): T | undefined {
     if (!this.root) {
       return undefined;
     }
     return this._findMin(this.root!).value;
   }
-  get max() {
+  max() {
     if (!this.root) {
       return undefined;
     }
     return this._findMax(this.root!).value;
   }
+  prev(val: T): T | undefined {
+    return this._prevHelper(this.root, val);
+  }
 
-  /** Helper*/
-  private _insertHelper(node: AVL_TreeNode<T> | null, value: T): AVL_TreeNode<T> {
-    // create node
+  next(val: T): T | undefined {
+    return this._nextHelper(this.root, val);
+  }
+
+  /** private */
+  private _insertHelper(node: AVL_TreeNode<T> | null, val: T): AVL_TreeNode<T> {
     if (!node) {
-      return new AVL_TreeNode(value);
+      return new AVL_TreeNode(val);
     }
-
-    // add new node
-    // use binary search(recursive)
-    if (value < node.value) {
-      node.left = this._insertHelper(node.left, value);
-    } else if (value > node.value) {
-      node.right = this._insertHelper(node.right, value);
+    if (val < node.value) {
+      node.left = this._insertHelper(node.left, val);
+    } else if (node.value < val) {
+      node.right = this._insertHelper(node.right, val);
     } else {
-      // if new value is already exsistss, increment the count
-      node.count++;
+      return node;
     }
 
-    node.height = this._getNewHeight(node);
-    const balanceFactor = this._getBalance(node);
-
-    return this._balancingNode(node, balanceFactor, value);
+    node.height = this._newHeight(node);
+    return this._balancing(node, val);
   }
 
-  private _getNewHeight(node: AVL_TreeNode<T>) {
-    return Math.max(this._getHeight(node.left), this._getHeight(node.right)) + 1;
-  }
-  private _getHeight(node: AVL_TreeNode<T> | null) {
-    return node ? node.height : 0;
-  }
-  private _getBalance(node: AVL_TreeNode<T>): number {
+  private _getBalanceFactor(node: AVL_TreeNode<T>): number {
     return this._getHeight(node.right) - this._getHeight(node.left);
   }
-  private _balancingNode(node: AVL_TreeNode<T>, factor: number, value: T): AVL_TreeNode<T> {
-    // if the right tree is long
-    if (factor > 1) {
-      if (value > node.right!.value) {
-        return this._rotateLeft(node);
+  private _getHeight(node: AVL_TreeNode<T> | null): number {
+    return node ? node.height : 0;
+  }
+  private _newHeight(node: AVL_TreeNode<T>): number {
+    return Math.max(this._getHeight(node.left), this._getHeight(node.right)) + 1;
+  }
+  private _balancing(node: AVL_TreeNode<T>, val: T) {
+    const factor = this._getBalanceFactor(node);
+    if (factor < -1) {
+      if (val < node.left!.value) {
+        return this._rightRotate(node);
       } else {
-        node.right = this._rotateRight(node.right!);
-        return this._rotateLeft(node);
+        node.left = this._leftRotate(node.left!);
+        return this._rightRotate(node);
       }
-    }
-    // if the left tree is long
-    else if (factor < -1) {
-      if (value < node.left!.value) {
-        return this._rotateRight(node);
+    } else if (1 < factor) {
+      if (val > node.right!.value) {
+        return this._leftRotate(node);
       } else {
-        node.left = this._rotateLeft(node.left!);
-        return this._rotateRight(node);
+        node.right = this._rightRotate(node.right!);
+        return this._leftRotate(node);
       }
     }
 
     return node;
   }
-  private _rotateLeft(node: AVL_TreeNode<T>): AVL_TreeNode<T> {
+  private _leftRotate(node: AVL_TreeNode<T>) {
     const pivot = node.right!;
-    node.right = pivot.left;
-    pivot.left = node;
+    node.right = pivot ? pivot.left : null;
+    if (pivot) pivot.left = node;
 
-    node.height = this._getNewHeight(node);
-    pivot.height = this._getNewHeight(pivot);
+    node.height = this._newHeight(node);
+    if (pivot) pivot.height = this._newHeight(pivot);
 
-    return pivot;
+    return pivot || node;
   }
-  private _rotateRight(node: AVL_TreeNode<T>): AVL_TreeNode<T> {
+
+  private _rightRotate(node: AVL_TreeNode<T>) {
     const pivot = node.left!;
-    node.left = pivot.right;
-    pivot.right = node;
+    node.left = pivot ? pivot.right : null;
+    if (pivot) pivot.right = node;
 
-    node.height = this._getNewHeight(node);
-    pivot.height = this._getNewHeight(pivot);
+    node.height = this._newHeight(node);
+    if (pivot) pivot.height = this._newHeight(pivot);
 
-    return pivot;
+    return pivot || node;
   }
-  private _getCountHelper(node: AVL_TreeNode<T> | null, value: T): number {
-    // value is not exsists.
-    if (!node) {
-      return 0;
-    }
-    // binary search(recursive)
-    if (value < node.value) {
-      return this._getCountHelper(node.left, value);
-    } else if (value > node.value) {
-      return this._getCountHelper(node.right, value);
-    } else {
-      return node.count;
-    }
-  }
-  private _removeHelper(node: AVL_TreeNode<T> | null, value: T): AVL_TreeNode<T> | null {
-    // value is not exsists
+
+  private _removeHelper(node: AVL_TreeNode<T> | null, val: T): AVL_TreeNode<T> | null {
     if (!node) {
       return null;
     }
-
-    if (value < node.value) {
-      node.left = this._removeHelper(node.left, value);
-    } else if (value > node.value) {
-      node.right = this._removeHelper(node.right, value);
+    if (val < node.value) {
+      node.left = this._removeHelper(node.left, val);
+    } else if (val > node.value) {
+      node.right = this._removeHelper(node.right, val);
     } else {
-      if (node.count > 1) {
-        node.count--;
+      if (!node.left) {
+        node = node.right;
+      } else if (!node.right) {
+        node = node.left;
       } else {
-        if (!node.left) {
-          node = node.right;
-        } else if (!node.right) {
-          node = node.left;
-        } else {
-          const min = this._findMin(node.right);
-          node.value = min.value;
-          node.right = this._removeHelper(node.right, min.value);
-        }
+        const min = this._findMin(node.right);
+        node.value = min.value;
+        node.right = this._removeHelper(node.right, min.value);
       }
 
       if (node) {
-        node.height = this._getNewHeight(node);
-        const balanceFactor = this._getBalance(node);
-        return this._balancingNode(node, balanceFactor, value);
+        node.height = this._newHeight(node);
+        return this._balancing(node, val);
       }
     }
     return node;
   }
   private _findMin(node: AVL_TreeNode<T>): AVL_TreeNode<T> {
     let curr = node;
-    while (curr.left !== null) {
+    while (curr.left) {
       curr = curr.left;
     }
     return curr;
   }
   private _findMax(node: AVL_TreeNode<T>): AVL_TreeNode<T> {
     let curr = node;
-    while (curr.right !== null) {
+    while (curr.right) {
       curr = curr.right;
     }
     return curr;
+  }
+
+  private _prevHelper(node: AVL_TreeNode<T> | null, val: T): T | undefined {
+    if (!node) {
+      return undefined;
+    }
+
+    if (val <= node.value) {
+      return this._prevHelper(node.left, val);
+    } else {
+      const right = this._prevHelper(node.right, val);
+      return right !== undefined ? right : node.value;
+    }
+  }
+
+  private _nextHelper(node: AVL_TreeNode<T> | null, val: T): T | undefined {
+    if (!node) {
+      return undefined;
+    }
+
+    if (val >= node.value) {
+      return this._nextHelper(node.right, val);
+    } else {
+      const left = this._nextHelper(node.left, val);
+      return left !== undefined ? left : node.value;
+    }
   }
 }
 
@@ -188,35 +191,16 @@ tm.insert(4);
 tm.insert(2);
 tm.insert(6);
 tm.insert(1);
+tm.remove(1);
+console.log(tm.min(), "min");
 tm.insert(1);
+console.log(tm.min(), "min");
 
-console.log(tm.min, tm.max); // 1, 6
-tm.remove(tm.min);
-console.log(tm.min); // 1
-tm.remove(tm.min);
-console.log(tm.min); // 2
-tm.remove(tm.max);
-console.log(tm.max); // 5
+console.log(tm.min(), tm.max()); // 1, 6
+tm.remove(tm.min());
+console.log(tm.min()); // 1
+tm.remove(tm.min());
+console.log(tm.min()); // 2
+tm.remove(tm.max());
+console.log(tm.max()); // 5
 tm.insert(3);
-console.log(tm.count(1));
-console.log(tm.count(2));
-console.log(tm.count(3)); //2
-console.log(tm.count(4));
-console.log(tm.count(5));
-console.log(tm.count(6));
-const ts = new AVL_Tree();
-
-ts.insert(2);
-console.log(2);
-ts.insert(3);
-console.log(3);
-
-ts.insert(4);
-console.log(4);
-
-ts.insert(5);
-console.log(ts.min, ts.max);
-ts.insert(6);
-console.log(ts.min, ts.max);
-ts.insert(1);
-console.log(ts.min, ts.max);
