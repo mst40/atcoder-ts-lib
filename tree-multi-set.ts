@@ -18,7 +18,6 @@ class TreeSetNode<T> {
     this.count--;
   }
 }
-
 class TreeMultiSet<T> {
   root: TreeSetNode<T> | null;
   constructor() {
@@ -35,6 +34,9 @@ class TreeMultiSet<T> {
       return false;
     }
     return true;
+  }
+  count(value: T): number {
+    return this._getCountHelper(this.root, value);
   }
   min(): T | undefined {
     if (!this.root) {
@@ -53,6 +55,13 @@ class TreeMultiSet<T> {
   }
   upper_bound(val: T) {
     return this._upper_boundHelper(this.root, val);
+  }
+  prev(val: T): T | undefined {
+    return this._prevHelper(this.root, val);
+  }
+
+  next(val: T): T | undefined {
+    return this._nextHelper(this.root, val);
   }
 
   /** private */
@@ -123,6 +132,20 @@ class TreeMultiSet<T> {
 
     return pivot || node;
   }
+  private _getCountHelper(node: TreeSetNode<T> | null, value: T): number {
+    // value is not exsists.
+    if (!node) {
+      return 0;
+    }
+    // binary search(recursive)
+    if (value < node.value) {
+      return this._getCountHelper(node.left, value);
+    } else if (value > node.value) {
+      return this._getCountHelper(node.right, value);
+    } else {
+      return node.count;
+    }
+  }
   private _removeHelper(node: TreeSetNode<T> | null, val: T): TreeSetNode<T> | null {
     if (!node) {
       return null;
@@ -191,6 +214,31 @@ class TreeMultiSet<T> {
       return this._upper_boundHelper(node.right, val);
     }
   }
+  private _prevHelper(node: TreeSetNode<T> | null, val: T): T | undefined {
+    if (!node) {
+      return undefined;
+    }
+
+    if (val <= node.value) {
+      return this._prevHelper(node.left, val);
+    } else {
+      const right = this._prevHelper(node.right, val);
+      return right !== undefined ? right : node.value;
+    }
+  }
+
+  private _nextHelper(node: TreeSetNode<T> | null, val: T): T | undefined {
+    if (!node) {
+      return undefined;
+    }
+
+    if (val >= node.value) {
+      return this._nextHelper(node.right, val);
+    } else {
+      const left = this._nextHelper(node.left, val);
+      return left !== undefined ? left : node.value;
+    }
+  }
 }
 
 /**
@@ -199,23 +247,23 @@ class TreeMultiSet<T> {
  * value:
  *  The value stored in the node.
  *  ノード内の値
- * 
+ *
  * left:
  *  A reference to the left child node.
  *  左子ノードの参照
- * 
+ *
  * right:
  *  A reference to the right child node.
  *  右子ノードの参照
- * 
+ *
  * height:
  *  The height of the node in the tree
  *  ツリー内でのノードの高さ
- * 
+ *
  * count:
  *  The number of occurrences of the value in the TreeSet
  *  その値の数
- * 
+ *
  *
  * TreeSet class
  * Methods
