@@ -37,6 +37,13 @@ class PriorityQueue<T> {
     return res;
   }
 
+  top(): [T, number] | undefined {
+    const Q = this.heap;
+    const res = Q[0];
+    if (res) res[1] *= this.order;
+    return res;
+  }
+
   isEmpty() {
     return this.heap.length ? false : true;
   }
