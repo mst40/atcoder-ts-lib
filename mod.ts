@@ -35,6 +35,22 @@ class Mod {
   div(p: bigint, q: bigint) {
     return this.mul(p, this.inv(q));
   }
+  nPr(x: bigint, r: bigint): bigint {
+    let res: bigint = x;
+    for (let i = 1n; i < r; i++) {
+      res *= x - i;
+      res %= this.mod;
+    }
+    return res;
+  }
+  fac(x: bigint): bigint {
+    let res: bigint = 1n;
+    for (let i = 2n; i <= x; i++) {
+      res *= i;
+      res %= this.mod;
+    }
+    return res;
+  }
 }
 
 const mod = {
