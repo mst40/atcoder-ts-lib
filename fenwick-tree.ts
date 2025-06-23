@@ -1,3 +1,14 @@
+/**
+ * @class FenwickTree
+ *
+ * add: iをvalに置き換える O(logN)
+ * sum: 0からiまでの区間和を求める O(logN)
+ *
+ * 区間に対して加算を行いたい場合、imos法のように更新する
+ * FenwicckTree.add(s,v)
+ * FenwicckTree.add(t,-v)
+ *
+ */
 class FenwickTree {
   tree: number[];
   size: number;
@@ -28,11 +39,3 @@ class FenwickTree {
     return res;
   }
 }
-
-// const N = 10;
-// const ft = new FenwickTree(N);
-//
-// function add(s: number, t: number, x: number) {
-//   ft.add(s, x);
-//   ft.add(t, -x);
-// }
