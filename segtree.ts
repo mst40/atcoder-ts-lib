@@ -54,6 +54,10 @@ class LazySegTree {
     return this.tree[t];
   }
 
+  query(a: number, b: number): number {
+    return this._queryHelper(a, b, 0, 0, this.len);
+  }
+
   /* helper functions */
   private _min(a: number, b: number) {
     return a < b ? a : b;
