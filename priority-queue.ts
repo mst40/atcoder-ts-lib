@@ -39,7 +39,7 @@ class PriorityQueue<T> {
 
   top(): [T, number] | undefined {
     const Q = this.heap;
-    const res = Q[0];
+    const res: [T, number] = [...Q[0]];
     if (res) res[1] *= this.order;
     return res;
   }
