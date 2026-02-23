@@ -22,7 +22,7 @@ class LazySegTree {
   };
   private _segInit = {
     sum: 0,
-    max: -1,
+    max: -Infinity,
     min: Infinity,
     mul: 1,
     gcd: 0,
@@ -123,7 +123,7 @@ class SegmentTree {
   };
   private _segInit = {
     sum: 0,
-    max: -1,
+    max: -Infinity,
     min: Infinity,
     mul: 1,
     gcd: 0,
