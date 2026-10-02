@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node --test -r ts-node/register tests/*.test.ts"
+    "test": "node --test -r ts-node/register tests/all.test.ts tests/algorithms/*.test.ts tests/data-structures/*.test.ts"
   },
   "devDependencies": {
     "@types/node": "^20.19.11",

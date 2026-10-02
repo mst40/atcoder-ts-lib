@@ -1,0 +1,12 @@
+# Installed npm dependencies
+node_modules/
+
+# Generated TypeScript output and build metadata
+dist/
+*.tsbuildinfo
+
+# Test coverage output
+coverage/
+
+# npm debug logs
+npm-debug.log*
