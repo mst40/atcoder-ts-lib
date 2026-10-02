@@ -1,0 +1,13 @@
+{
+  "name": "atcoder-ts-lib",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test -r ts-node/register tests/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.1.6"
+  }
+}
