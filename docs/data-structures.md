@@ -13,7 +13,8 @@
 | [imos](data-structures/imos.md) · [source](../data-structures/imos.ts) | Imos | 範囲更新 O(1)、復元 intended O(n) |
 | [lrud](data-structures/lrud.md) · [source](../data-structures/lrud.ts) | moveLRUD | 移動 O(1) |
 | [priority-queue](data-structures/priority-queue.md) · [source](../data-structures/priority-queue.ts) | PriorityQueue | push/pop O(log n)、top O(1) |
-| [segtree](data-structures/segtree.md) · [source](../data-structures/segtree.ts) | SegmentTree, LazySegTree | query/update O(log n) |
+| [lazy-segtree](data-structures/lazy-segtree.md) · [source](../data-structures/lazy-segtree.ts) | LazySegTree | range assignment/query O(log n) |
+| [segtree](data-structures/segtree.md) · [source](../data-structures/segtree.ts) | SegmentTree | point update/range query O(log n) |
 | [tree-multi-set](data-structures/tree-multi-set.md) · [source](../data-structures/tree-multi-set.ts) | TreeMultiSet | 操作 O(log n) |
 | [trie-tree](data-structures/trie-tree.md) · [source](../data-structures/trie-tree.ts) | TrieTree | 文字列長Lに対し O(L) |
 | [union-find](data-structures/union-find.md) · [source](../data-structures/union-find.ts) | UnionFind | unite/find 償却 O(α(n)) |
@@ -55,15 +56,6 @@ APIは push_front, push_back, pop, isEmpty で、値の型は number[] です。
 ## PriorityQueue
 
 `new PriorityQueue("asc" | "des")` で優先順を選びます。`push(key, priority = Number(key))`、`pop()`、`top()`、`isEmpty()` を提供し、pop/topは [key, priority] を返します。priorityはnumber。空ならpopはundefinedですが、topは空キューで安全ではないため、先にisEmpty()を確認してください。
-
-## SegmentTree・LazySegTree
-
-両者は sum, max, min, mul, gcd の集約を選べます。
-
-- SegmentTree: update(i, value) は一点更新、get(i) は一点取得、query(l, r) は半開区間 [l, r) の集約値。
-- LazySegTree: update(l, r, value) は半開区間への代入、get/query は値の取得。
-
-入力配列は空でない想定です。**LazySegTreeのsumで複数要素を一括代入すると正しい合計になりません**。lazy値を集約値へそのまま設定し、区間長を掛けないためです。遅延値が残る場合のgetも反映前の値を読む可能性があります。
 
 ## TreeMultiSet
 
