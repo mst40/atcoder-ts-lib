@@ -1,90 +1,159 @@
-class LazySegTree {
-  tree: number[];
-  len: number;
-  fn: (a: number, b: number) => number;
-  lazy: number[];
-  init: number;
-  constructor(ary: number[], func: "sum" | "max" | "min" | "mul" | "gcd") {
-    this.len = 2 ** Math.ceil(Math.log2(ary.length));
-    this.init = this._segInit[func];
-    this.fn = (a: number, b: number) => this._segFunc[func](a, b);
-    this.tree = new Array(2 * this.len - 1).fill(this.init);
-    this.lazy = new Array(2 * this.len - 1).fill(this.init);
-    ary.map((v, i) => this.update(i, i + 1, v));
-  }
-  private _segFunc = {
-    sum: (a: number, b: number): number => a + b,
-    max: (a: number, b: number): number => Math.max(a, b),
-    min: (a: number, b: number): number => Math.min(a, b),
-    mul: (a: number, b: number): number => a * b,
-    gcd: (a: number, b: number): number => (b ? this._segFunc.gcd(b, a % b) : a),
-  };
-  private _segInit = {
-    sum: 0,
-    max: -Infinity,
-    min: Infinity,
-    mul: 1,
-    gcd: 0,
-  };
+class LazySegTree<S, F> {
+  private size: number;
+  private log: number;
+  private d: S[];
+  private lz: F[];
 
-  // lazy eval
-  eval(t: number): void {
-    if (this.lazy[t] === this.init) {
-      return;
+  constructor(
+    private op: (a: S, b: S) => S,
+    private e: () => S,
+    private mapping: (f: F, x: S) => S,
+    private composition: (f: F, g: F) => F,
+    private id: () => F,
+    v: S[],
+  ) {
+    let size = 1;
+    let log = 0;
+
+    while (size < v.length) {
+      size <<= 1;
+      log++;
     }
-    // 子ノードに伝播
-    if (t < this.len - 1) {
-      this.lazy[t * 2 + 1] = this.lazy[t];
-      this.lazy[t * 2 + 2] = this.lazy[t];
+
+    this.size = size;
+    this.log = log;
+
+    this.d = new Array(2 * size).fill(null).map(() => this.e());
+    this.lz = new Array(size).fill(null).map(() => this.id());
+
+    // 葉
+    for (let i = 0; i < v.length; i++) {
+      this.d[size + i] = v[i];
     }
-    // 自身に反映＆初期化
-    this.tree[t] = this.lazy[t];
-    this.lazy[t] = this.init;
-  }
 
-  // update [a,b) to x
-  update(a: number, b: number, x: number): void {
-    this._updateHelper(a, b, x, 0, 0, this.len);
-  }
-
-  // the value of t
-  get(t: number): number {
-    t += this.len - 1;
-    return this.tree[t];
-  }
-
-  query(a: number, b: number): number {
-    return this._queryHelper(a, b, 0, 0, this.len);
-  }
-
-  /* helper functions */
-  private _updateHelper(a: number, b: number, x: number, t: number, l: number, r: number) {
-    this.eval(t);
-    if (a <= l && r <= b) {
-      this.lazy[t] = x;
-      this.eval(t);
-    } else if (l < b && a < r) {
-      this._updateHelper(a, b, x, t * 2 + 1, l, Math.floor((l + r) / 2));
-      this._updateHelper(a, b, x, t * 2 + 2, Math.floor((l + r) / 2), r);
-      this.tree[t] = this.fn(this.tree[t * 2 + 1], this.tree[t * 2 + 2]); ///////////////////editable
-    }
-  }
-  private _queryHelper(a: number, b: number, t: number, l: number, r: number): number {
-    this.eval(t);
-    if (b <= l || r <= a) {
-      return this.init;
-    } else if (a <= l && r <= b) {
-      return this.tree[t];
-    } else {
-      const vl = this._queryHelper(a, b, t * 2 + 1, l, Math.floor((l + r) / 2));
-      const vr = this._queryHelper(a, b, t * 2 + 2, Math.floor((l + r) / 2), r);
-      return this.fn(vl, vr);
+    // 親
+    for (let i = size - 1; i >= 1; i--) {
+      this.update(i);
     }
   }
 
-  debug() {
-    console.log("len", this.len);
-    console.log("tree", this.tree);
-    console.log("lazy", this.lazy);
+  private update(k: number): void {
+    this.d[k] = this.op(this.d[2 * k], this.d[2 * k + 1]);
+  }
+
+  private allApply(k: number, f: F): void {
+    this.d[k] = this.mapping(f, this.d[k]);
+
+    if (k < this.size) {
+      this.lz[k] = this.composition(f, this.lz[k]);
+    }
+  }
+
+  private push(k: number): void {
+    this.allApply(2 * k, this.lz[k]);
+    this.allApply(2 * k + 1, this.lz[k]);
+    this.lz[k] = this.id();
+  }
+
+  get(p: number): S {
+    p += this.size;
+
+    for (let i = this.log; i >= 1; i--) {
+      this.push(p >> i);
+    }
+
+    return this.d[p];
+  }
+
+  set(p: number, x: S): void {
+    p += this.size;
+
+    for (let i = this.log; i >= 1; i--) {
+      this.push(p >> i);
+    }
+
+    this.d[p] = x;
+
+    for (let i = 1; i <= this.log; i++) {
+      this.update(p >> i);
+    }
+  }
+
+  prod(l: number, r: number): S {
+    if (l === r) return this.e();
+
+    l += this.size;
+    r += this.size;
+
+    for (let i = this.log; i >= 1; i--) {
+      if ((l >> i) << i !== l) {
+        this.push(l >> i);
+      }
+
+      if ((r >> i) << i !== r) {
+        this.push((r - 1) >> i);
+      }
+    }
+
+    let sml = this.e();
+    let smr = this.e();
+
+    while (l < r) {
+      if (l & 1) {
+        sml = this.op(sml, this.d[l++]);
+      }
+
+      if (r & 1) {
+        smr = this.op(this.d[--r], smr);
+      }
+
+      l >>= 1;
+      r >>= 1;
+    }
+
+    return this.op(sml, smr);
+  }
+
+  apply(l: number, r: number, f: F): void {
+    if (l === r) return;
+
+    l += this.size;
+    r += this.size;
+
+    for (let i = this.log; i >= 1; i--) {
+      if ((l >> i) << i !== l) {
+        this.push(l >> i);
+      }
+
+      if ((r >> i) << i !== r) {
+        this.push((r - 1) >> i);
+      }
+    }
+
+    const l2 = l;
+    const r2 = r;
+
+    while (l < r) {
+      if (l & 1) {
+        this.allApply(l++, f);
+      }
+
+      if (r & 1) {
+        this.allApply(--r, f);
+      }
+
+      l >>= 1;
+      r >>= 1;
+    }
+
+    for (let i = 1; i <= this.log; i++) {
+      if ((l2 >> i) << i !== l2) {
+        this.update(l2 >> i);
+      }
+
+      if ((r2 >> i) << i !== r2) {
+        this.update((r2 - 1) >> i);
+      }
+    }
   }
 }

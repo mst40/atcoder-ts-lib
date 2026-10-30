@@ -13,7 +13,7 @@
 | [imos](data-structures/imos.md) · [source](../data-structures/imos.ts) | Imos | 範囲更新 O(1)、復元 intended O(n) |
 | [lrud](data-structures/lrud.md) · [source](../data-structures/lrud.ts) | moveLRUD | 移動 O(1) |
 | [priority-queue](data-structures/priority-queue.md) · [source](../data-structures/priority-queue.ts) | PriorityQueue | push/pop O(log n)、top O(1) |
-| [lazy-segtree](data-structures/lazy-segtree.md) · [source](../data-structures/lazy-segtree.ts) | LazySegTree | range assignment/query O(log n) |
+| [lazy-segtree](data-structures/lazy-segtree.md) · [source](../data-structures/lazy-segtree.ts) | LazySegTree | range apply/prod O(log n) |
 | [segtree](data-structures/segtree.md) · [source](../data-structures/segtree.ts) | SegmentTree | point update/range query O(log n) |
 | [tree-multi-set](data-structures/tree-multi-set.md) · [source](../data-structures/tree-multi-set.ts) | TreeMultiSet | 操作 O(log n) |
 | [trie-tree](data-structures/trie-tree.md) · [source](../data-structures/trie-tree.ts) | TrieTree | 文字列長Lに対し O(L) |
